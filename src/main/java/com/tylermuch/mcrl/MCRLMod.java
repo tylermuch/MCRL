@@ -59,6 +59,14 @@ public class MCRLMod {
     @Mod.EventHandler
     public void init (FMLInitializationEvent event) {
 
+        if (serial != null) {
+            try {
+                serial.addEventListener(new MCRLEventHandler());
+            } catch (SerialPortException e) {
+                e.printStackTrace();
+            }
+        }
+
     }
 
     @Mod.EventHandler
