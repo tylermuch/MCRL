@@ -78,7 +78,9 @@ public class MCRLMod {
     public void starting (FMLServerStartingEvent event) {
         if (serial == null) return;
         try {
-            serial.writeString("World Name: " + event.getServer().getWorldName());
+            if (serial.writeString("World Name: " + event.getServer().getWorldName())) {
+                serial.writeByte((byte)'\0');
+            }
         } catch (SerialPortException e) {
             e.printStackTrace();
         }

@@ -67,6 +67,8 @@ public class MCRLEventHandler implements SerialPortEventListener{
             if (hasMoved) {
                 System.out.println("HAS MOVED");
                 hasMoved = false;
+                event.player.jump();
+
             }
         }
     }
