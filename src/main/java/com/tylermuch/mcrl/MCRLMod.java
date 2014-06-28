@@ -1,11 +1,9 @@
 package com.tylermuch.mcrl;
 
 import com.tylermuch.mcrl.util.LogHelper;
+import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.Mod;
-import cpw.mods.fml.common.event.FMLInitializationEvent;
-import cpw.mods.fml.common.event.FMLPostInitializationEvent;
-import cpw.mods.fml.common.event.FMLPreInitializationEvent;
-import cpw.mods.fml.common.event.FMLServerStoppingEvent;
+import cpw.mods.fml.common.event.*;
 import jssc.SerialPort;
 import jssc.SerialPortException;
 import jssc.SerialPortList;
@@ -54,6 +52,8 @@ public class MCRLMod {
             e.printStackTrace();
         }
 
+        FMLCommonHandler.instance().bus().register(new MCRLEventHandler());
+
     }
 
     @Mod.EventHandler
@@ -73,6 +73,17 @@ public class MCRLMod {
     public void postInit (FMLPostInitializationEvent event) {
 
     }
+
+    @Mod.EventHandler
+    public void starting (FMLServerStartingEvent event) {
+        if (serial == null) return;
+        try {
+            serial.writeString("World Name: " + event.getServer().getWorldName());
+        } catch (SerialPortException e) {
+            e.printStackTrace();
+        }
+    }
+
 
     @Mod.EventHandler
     public void stopping (FMLServerStoppingEvent event) {
