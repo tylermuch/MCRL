@@ -15,10 +15,17 @@ public class MCRLEventHandler implements SerialPortEventListener{
 
     @Override
     public void serialEvent (SerialPortEvent serialPortEvent) {
+        byte b = -1;
         switch (serialPortEvent.getEventType()) {
             case SerialPortEvent.RXCHAR:
+                if (hasMoved) {
+                    try {
+                        b = MCRLMod.serial.readBytes(1)[0];
+                    } catch (SerialPortException e) {}
+                    return;
+                }
                 System.out.print("RXCHAR [" + serialPortEvent.getEventValue() + "]: ");
-                byte b = -1;
+
                 try {
                     b = MCRLMod.serial.readBytes(1)[0];
                     System.out.println(b);
@@ -63,12 +70,26 @@ public class MCRLEventHandler implements SerialPortEventListener{
 
     @SubscribeEvent
     public void onPlayerTick (TickEvent.PlayerTickEvent event) {
-        if (event.phase == TickEvent.Phase.END) {
+        if (event.phase == TickEvent.Phase.START) {
             if (hasMoved) {
-                System.out.println("HAS MOVED");
+                switch(dir) {
+                    case FORWARD:
+                        event.player.moveEntityWithHeading(0, 1);
+                        break;
+                    case BACKWARD:
+                        event.player.moveEntityWithHeading(0, -1);
+                        break;
+                    case LEFT:
+                        event.player.moveEntityWithHeading(1, 0);
+                        break;
+                    case RIGHT:
+                        event.player.moveEntityWithHeading(-1, 0);
+                        break;
+                    case JUMP:
+                        if (event.player.onGround) event.player.jump();
+                        break;
+                }
                 hasMoved = false;
-                event.player.jump();
-
             }
         }
     }
